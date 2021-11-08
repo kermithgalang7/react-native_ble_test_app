@@ -43,6 +43,11 @@ Log,
 let manager = new BleManager();
 manager.setLogLevel(LogLevel.Verbose);
 
+let bledevice;
+let deviceid;
+let serviceuuid;
+let charuuid;
+
 const Section = ({children, title}): Node => {
   const isDarkMode = useColorScheme() === 'dark';
   return (
@@ -76,7 +81,7 @@ function getServicesAndCharacteristics(device){
             console.log("kermith", services)
             services.forEach((service, i) => {
                 service.characteristics().then(c => {
-                    console.log(service.characteristic)
+                    console.log("service.characteristic")
 
                     characteristic.push(c)
                     console.log(characteristic)
@@ -113,6 +118,9 @@ async function ScanAndConnect() {
             if (scannedDevice != null && scannedDevice.localName === 'ESP_SPP_SERVER') {
                 console.log('Scan Ble')
                 console.log(scannedDevice.localName)
+                bledevice = scannedDevice;
+                deviceid = scannedDevice.id;
+                serviceuuid = scannedDevice.serviceUUIDs[0];
                 stopScan();
             }
 
@@ -123,12 +131,13 @@ async function ScanAndConnect() {
                     console.log('characteristic')
                     console.log(characteristic)
                     console.log("Discovering characteristics and services", characteristic.uuid);
+                    charuuid = characteristic.uuid;
                 })();
                 return scannedDevice.discoverAllServicesAndCharacteristics()
             }).then((scannedDevice) => {
                 //
             }).then(() => {
-                console.log('Listening')
+                console.log('Listening');
             }, (error) => {
                 console.log(error)
             })
@@ -140,7 +149,9 @@ async function ScanAndConnect() {
 async function SendCommand(code, message) {
     console.log('sending code ', code, ' message ', message)
 
-    
+    console.log('deviceid ', deviceid);
+    console.log('serviceuuid ', serviceuuid);
+    console.log('charuuid ', charuuid);
 }
 
 function testfunc() {
